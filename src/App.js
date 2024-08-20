@@ -11,8 +11,8 @@ import backgroundImage from './assets/background_image.png';
 
 const Simulation = () => {
   // Adjustable states
-  const [building2Height, setBuilding2Height] = useState(300); // Initial height of building2
-  const [handAngle, setHandAngle] = useState(0); // Angle of the man's hand
+  const [building2Height, setBuilding2Height] = useState(400); // Initial height of building2
+  const [handAngle, setHandAngle] = useState(12); // Angle of the man's hand
 
   // Fixed positions
   const building1Position = { x: 110, y: 400 }; // Position of building1 (center)
@@ -34,15 +34,15 @@ const Simulation = () => {
   // Convert hand angle to radians for the dotted line's endpoint
   const handAngleRadians = (handAngle * Math.PI) / 180;
 
-  // Calculate the endpoint of the dotted line based on the hand rotation
-  const lineLength = 300; // Length of the dotted line
+  // Calculation of the endpoint of the dotted line based on the hand rotation
+  const lineLength = 300; 
   const lineEndX = manPosition.x + 476 + 70 + lineLength * Math.cos(handAngleRadians);
   const lineEndY = manPosition.y - 40 - lineLength * Math.sin(handAngleRadians);
 
-  // Calculate the angle between the dotted line and the horizontal line
+  // Calculation of  the angle between the dotted line and the horizontal line
   const angleBetweenLines = Math.abs(handAngle);
 
-  // Handle take picture logic
+  // taking picture code
   const handleTakePicture = () => {
     if (Math.abs(calculatedAngle - handAngle) < 2) { // Tolerance of 2 degrees
       alert('Picture taken successfully!');
@@ -57,13 +57,13 @@ const Simulation = () => {
       style={{
         position: 'relative',
         height: '100vh',
-        backgroundImage: `url(${backgroundImage})`, // Set the background image here
-        backgroundSize: 'cover', // Cover the entire background
-        backgroundPosition: 'center', // Center the background image
-        backgroundRepeat: 'no-repeat', // Avoid repeating the background image
+        backgroundImage: `url(${backgroundImage})`, // Setting up of background
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center', 
+        backgroundRepeat: 'no-repeat', 
       }}
     >
-      {/* Building1 with Man (Center) */}
+     
       <div
         className="building1"
         style={{
@@ -76,7 +76,7 @@ const Simulation = () => {
           backgroundSize: 'cover',
         }}
       >
-        {/* Man standing on Building1 */}
+        
         <div
           className="man"
           style={{
@@ -94,17 +94,17 @@ const Simulation = () => {
             className="man-hand"
             style={{
               position: 'absolute',
-              left: '70px', // Adjust to position the hand relative to the body
-              top: '40px',  // Adjust to position the hand relative to the body
+              left: '70px', // Adjusting the  position the hand relative to the body
+              top: '40px',  // Adjusting the position the hand relative to the body
               width: '60px',
               height: '60px',
               backgroundImage: `url(${manHandImage})`,
               backgroundSize: 'cover',
               transform: `rotate(${-handAngle}deg)`,
-              transformOrigin: '10px 20px', // Adjusted origin to simulate shoulder rotation
+              transformOrigin: '10px 20px', // simulating shoulder rotation
             }}
           >
-            {/* Camera held by the hand */}
+            {/* Camera held in the hand */}
             <div
               className="camera-hand"
               style={{
@@ -129,7 +129,7 @@ const Simulation = () => {
           left: 0,
           width: '100%',
           height: '100%',
-          pointerEvents: 'none', // Prevent the SVG from interfering with other elements
+          pointerEvents: 'none', 
         }}
       >
         {/* Dotted line from the man's hand representing the angle */}
@@ -137,7 +137,7 @@ const Simulation = () => {
           x1={manPosition.x + 476 + 70} // Starting x (adjusted for hand position)
           y1={350} // Starting y (adjusted for hand position)
           x2={lineEndX} // Dynamic end x based on hand angle
-          y2={lineEndY} // Dynamic end y based on hand angle
+          y2={lineEndY+87} // Dynamic end y based on hand angle
           stroke="black"
           strokeWidth="1"
           strokeDasharray="3,3"
@@ -194,7 +194,7 @@ const Simulation = () => {
           backgroundSize: 'cover',
         }}
       >
-        {/* Display the boy image if the hand angle is approximately correct */}
+        {/* Displaying the boy image if the hand angle is approximately correct we are taking +- 2 */}
         {Math.abs(calculatedAngle - handAngle) < 2 && (
           <img
             src={boyImage}
@@ -208,7 +208,7 @@ const Simulation = () => {
             }}
           />
         )}
-        {/* Display the building image if the hand angle is less than the calculated angle */}
+        {/* Displaying the building image if the hand angle is less than the calculated angle */}
         {handAngle < calculatedAngle && Math.abs(calculatedAngle - handAngle) >= 2 && (
           <div
             style={{
