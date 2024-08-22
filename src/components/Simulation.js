@@ -20,6 +20,7 @@ const Simulation = () => {
   const [handAngle, setHandAngle] = useState(12);
   const [manPosition, setManPosition] = useState(160); // Initial x position within building1
   const [isDragging, setIsDragging] = useState(false);
+  const [showBoyImage, setShowBoyImage] = useState(false); // New state for showing the image in camera
   const manRef = useRef(null);
 
   const building1Position = { x: 110, y: 400 };
@@ -46,7 +47,7 @@ const Simulation = () => {
 
   const handleTakePicture = () => {
     if (Math.abs(calculatedAngle - handAngle) < 2) {
-      alert('Picture taken successfully!');
+      setShowBoyImage(true); // Show the boy image in the camera
     } else {
       alert('Adjust the camera!');
     }
@@ -154,6 +155,23 @@ const Simulation = () => {
               />
             </div>
           </div>
+
+          <button
+            onClick={handleTakePicture}
+            style={{
+              position: 'absolute',
+              left: '110px',
+              bottom: '10px',
+              padding: '5px 10px',
+              backgroundColor: '#007bff',
+              color: '#fff',
+              border: 'none',
+              borderRadius: '5px',
+              cursor: 'pointer',
+            }}
+          >
+            Click Image
+          </button>
         </div>
 
         <svg
@@ -205,7 +223,7 @@ const Simulation = () => {
             backgroundSize: 'cover',
           }}
         >
-          {Math.abs(calculatedAngle - handAngle) < 2 && (
+          {showBoyImage && (
             <img
               src={boyImage}
               alt="Boy"
@@ -262,27 +280,11 @@ const Simulation = () => {
               type="range"
               min="-90"
               max="90"
-              //value={handAngle}
+              value={handAngle}
               onChange={(e) => setHandAngle(Number(e.target.value))}
               style={{ width: '100%' }}
             />
           </div>
-          <button
-            onClick={handleTakePicture}
-            style={{
-              marginTop: '10px',
-              padding: '5px',
-              width: '100%',
-              backgroundColor: '#007bff',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-            }}
-          >
-            Take Picture
-          </button>
-
           <div style={{ marginTop: '20px' }}>
             <p>Building2 Height: {building2Height}px</p>
             <p>Distance between Man and Building2: {distance}px</p>
