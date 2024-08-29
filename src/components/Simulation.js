@@ -11,6 +11,7 @@ import cameraDisplayImage from '../assets/camera.png';
 import boyImage from '../assets/boy_image.png';
 import buildingCameraImage from '../assets/building2_pic.png';
 import backgroundImage from '../assets/background_image.png';
+import arrowImage from '../assets/arrow.png'; // Import arrow image
 
 export const ITEM_TYPE = 'BUILDING_ICON';
 
@@ -20,8 +21,10 @@ const Simulation = () => {
   const [handAngle, setHandAngle] = useState(12);
   const [manPosition, setManPosition] = useState(160); // Initial x position within building1
   const [isDragging, setIsDragging] = useState(false);
+  const [isArrowDragging, setIsArrowDragging] = useState(false);
   const [showBoyImage, setShowBoyImage] = useState(false); // New state for showing the image in camera
   const manRef = useRef(null);
+  const arrowRef = useRef(null);
 
   const building1Position = { x: 110, y: 400 };
   const building1Width = 600; // Width of building1
@@ -46,8 +49,9 @@ const Simulation = () => {
   const angleBetweenLines = Math.abs(handAngle);
 
   const handleTakePicture = () => {
-    if (Math.abs(calculatedAngle - handAngle) < 2) {
+    if (Math.abs(calculatedAngle - handAngle) < 5) {
       setShowBoyImage(true); // Show the boy image in the camera
+      //alert("coorect it")
     } else {
       alert('Adjust the camera!');
     }
@@ -72,17 +76,37 @@ const Simulation = () => {
 
   const handleMouseUp = () => {
     setIsDragging(false);
+    setIsArrowDragging(false);
+  };
+
+  const handleArrowMouseDown = (e) => {
+    e.stopPropagation();
+    setIsArrowDragging(true);
+  };
+
+  const handleArrowMouseMove = (e) => {
+    if (isArrowDragging) {
+      const boundingRect = arrowRef.current.parentElement.getBoundingClientRect();
+      const arrowCenterX = boundingRect.left + boundingRect.width / 2;
+      const arrowCenterY = boundingRect.top + boundingRect.height / 2;
+      const deltaX = e.clientX - arrowCenterX;
+      const deltaY = arrowCenterY - e.clientY; // Invert Y axis for intuitive dragging
+      const newAngle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+      setHandAngle(newAngle);
+    }
   };
 
   useEffect(() => {
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('mousemove', handleArrowMouseMove);
 
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousemove', handleArrowMouseMove);
     };
-  }, [isDragging]);
+  }, [isDragging, isArrowDragging]);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -152,6 +176,21 @@ const Simulation = () => {
                   backgroundImage: `url(${cameraHandImage})`,
                   backgroundSize: 'cover',
                 }}
+              />
+              <img
+                ref={arrowRef}
+                src={arrowImage}
+                alt="Control Arrow"
+                style={{
+                  position: 'absolute',
+                  left: '30px',
+                  top: '0px',
+                  width: '40px',
+                  height: '20px',
+                  cursor: 'pointer',
+                  transform: `rotate(${handAngle}deg)`,
+                }}
+                onMouseDown={handleArrowMouseDown}
               />
             </div>
           </div>
@@ -229,11 +268,16 @@ const Simulation = () => {
               alt="Boy"
               style={{
                 position: 'absolute',
+                display: 'block', // Corrected: quotes around 'block'
+                zIndex: 10,       // Corrected: z-index should be zIndex
                 width: '76px',
                 height: '63px',
+                display: showBoyImage ? 'block' : 'none',
                 left: '9px',
                 top: '37px',
+                
               }}
+              
             />
           )}
           {handAngle < calculatedAngle && Math.abs(calculatedAngle - handAngle) >= 2 && (
@@ -271,17 +315,6 @@ const Simulation = () => {
               max="600"
               value={building2Height}
               onChange={(e) => setBuilding2Height(Number(e.target.value))}
-              style={{ width: '100%' }}
-            />
-          </div>
-          <div>
-            <label>Hand Angle: {handAngle}°</label>
-            <input
-              type="range"
-              min="-90"
-              max="90"
-              value={handAngle}
-              onChange={(e) => setHandAngle(Number(e.target.value))}
               style={{ width: '100%' }}
             />
           </div>
